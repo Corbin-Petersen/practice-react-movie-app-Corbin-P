@@ -28,14 +28,17 @@ const MovieSelector = () => {
         <>
             <div className="select-container">
                 <h2>Select a movie genre:</h2>
-                <select id="genre-select" name="genres" onChange={e => setGenre(e.target.value)}>
-                    <option value="">Select a genre</option>
-                    {genreList.map(genre => (
-                        <option key={genre.toLowerCase()} value={genre}>
-                            {genre}
-                        </option>
-                    ))}
-                </select>
+                <form>
+                    <select id="genre-select" name="genres" >
+                        <option value="">Select a genre</option>
+                        {genreList.map(genre => (
+                            <option key={genre.toLowerCase()} value={genre}>
+                                {genre}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="button" onClick={e => setGenre(e.target.previousSibling.value)} value="SUBMIT">SUBMIT</button>
+                </form>
             </div>
             <div className="movie-list">
                 <h2>Movies</h2>   
@@ -43,7 +46,7 @@ const MovieSelector = () => {
                     {selectedGenre 
                         ? movies.map(movieObj => (
                             movieObj.Genre.includes(selectedGenre) &&
-                                <li className="movie">
+                                <li className="movie" key={movieObj.Title}>
                                     <img src={movieObj.Images[1]} className="movie-image" />
                                     <h3>{movieObj.Title}</h3>
                                     <p>{movieObj.Year}</p>
