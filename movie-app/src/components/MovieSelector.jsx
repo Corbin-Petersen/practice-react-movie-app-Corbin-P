@@ -1,39 +1,61 @@
 import { useState } from 'react';
-import testMovies from '../data/testData';
+import data from '../data/testData.json';
 
-export default function MovieSelector() {
+const MovieSelector = () => {
 
     // set up useState
     const [ selectedGenre, setGenre ] = useState("");
     const [ isLoading, setIsLoading ] = useState(true);
-    const [ error, setError ] = useState("");
-    const [ movies, setMovies ] = useState(testMovies);
+    const [ error, setError ] = useState("Please select a genre above");
+    const [ movies, setMovies ] = useState(data);
 
-    // function to create array of genres pulled from movie list
-    const getGenres = (films) => {
+    // build genre list from genres in movieList
+    function getGenres(films) {
         let list = [];
-        for (film in films) {
-            let movObj = JSON.parse(film);
-            for (genre in movObj.Genre) {
+        films.map(movie => {
+            movie.Genre.map(genre => {
                 if (!list.includes(genre)){
                     list.push(genre);
                 }
-            }
-        }
+            });
+        });
         return list;
     }
+    const genreList = getGenres(movies);
 
-    const genreList = getGenres(testMovies);
-
+    //build out dropdown list of genres and field for displaying list
     return (
-        <div className="select-container">
-            <h2>Select a movie genre:</h2>
-            <select id="genre-select" name="genres">
-                {genreList.map(genre => {
-                    <option value={genre}>{genre}</option>
-                })}
-            </select>
-        </div>
+        <>
+            <div className="select-container">
+                <h2>Select a movie genre:</h2>
+                <select id="genre-select" name="genres" onChange={e => setGenre(e.target.value)}>
+                    <option value="">Select a genre</option>
+                    {genreList.map(genre => (
+                        <option key={genre.toLowerCase()} value={genre}>
+                            {genre}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="movie-list">
+                <h2>Movies</h2>   
+                <ul>
+                    {selectedGenre 
+                        ? movies.map(movieObj => (
+                            movieObj.Genre.includes(selectedGenre) &&
+                                <li className="movie">
+                                    <img src={movieObj.Images[1]} className="movie-image" />
+                                    <h3>{movieObj.Title}</h3>
+                                    <p>{movieObj.Year}</p>
+                                </li>                        
+                        ))
+                        : <li><p>{error}</p></li>
+                    }
+                </ul>
+            </div>
+        </>
     );
 
 }
+
+export default MovieSelector
